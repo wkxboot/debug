@@ -30,10 +30,10 @@
 /******************************************************************************/
 /*    配置开始                                                                */
 /******************************************************************************/
-#define  LOG_PRINTF_BUFFER_SIZE    256
+#define  LOG_PRINTF_BUFFER_SIZE    1560
 #define  LOG_LEVEL_GLOBLE_DEFAULT  LOG_LEVEL_DEBUG 
 #define  LOG_USE_RTT               1
-#define  LOG_USE_SERIAL            1
+#define  LOG_USE_SERIAL            0
 #define  LOG_USE_COLORS            1
 #define  LOG_USE_TIMESTAMP         1   
 
@@ -126,11 +126,11 @@ int log_set_level(uint8_t level);
 * @brief 终端日志输出
 * @param level 输出等级
 * @param format 格式化字符串
-* @param ... 可变参数列表
+* @param ... 可变参数
 * @return 实际写入的数量
 * @note
 */
-int log_vnprintf(uint8_t level,const char *format,...);
+int log_printf(uint8_t level,const char *format,...);
 
 /*
 * @brief 日志array输出
@@ -141,7 +141,7 @@ int log_vnprintf(uint8_t level,const char *format,...);
 */
 #define  log_array(format,arg...)                                                           \
 {                                                                                           \
-   log_vnprintf(LOG_LEVEL_ARRAY,LOG_ARRAY_PREFIX_FORMAT format,LOG_PREFIX_VALUE,##arg);     \
+   log_printf(LOG_LEVEL_ARRAY,LOG_ARRAY_PREFIX_FORMAT format,LOG_PREFIX_VALUE,##arg);     \
 }
 
 /*
@@ -153,7 +153,7 @@ int log_vnprintf(uint8_t level,const char *format,...);
 */
 #define  log_debug(format,arg...)                                                           \
 {                                                                                           \
-   log_vnprintf(LOG_LEVEL_DEBUG,LOG_DEBUG_PREFIX_FORMAT format,LOG_PREFIX_VALUE,##arg);     \
+   log_printf(LOG_LEVEL_DEBUG,LOG_DEBUG_PREFIX_FORMAT format,LOG_PREFIX_VALUE,##arg);     \
 }
 
 /*
@@ -165,7 +165,7 @@ int log_vnprintf(uint8_t level,const char *format,...);
 */
 #define  log_info(format,arg...)                                                            \
 {                                                                                           \
-   log_vnprintf(LOG_LEVEL_INFO,LOG_INFO_PREFIX_FORMAT format,LOG_PREFIX_VALUE,##arg);       \
+   log_printf(LOG_LEVEL_INFO,LOG_INFO_PREFIX_FORMAT format,LOG_PREFIX_VALUE,##arg);       \
 }
 
 /*
@@ -177,7 +177,7 @@ int log_vnprintf(uint8_t level,const char *format,...);
 */
 #define  log_warning(format,arg...)                                                        \
 {                                                                                          \
-   log_vnprintf(LOG_LEVEL_WARNING,LOG_WARNING_PREFIX_FORMAT format,LOG_PREFIX_VALUE,##arg);\
+   log_printf(LOG_LEVEL_WARNING,LOG_WARNING_PREFIX_FORMAT format,LOG_PREFIX_VALUE,##arg);\
 }
 
 /*
@@ -189,7 +189,7 @@ int log_vnprintf(uint8_t level,const char *format,...);
 */
 #define  log_error(format,arg...)                                                           \
 {                                                                                           \
-   log_vnprintf(LOG_LEVEL_ERROR,LOG_ERROR_PREFIX_FORMAT format,LOG_PREFIX_VALUE,##arg);     \
+   log_printf(LOG_LEVEL_ERROR,LOG_ERROR_PREFIX_FORMAT format,LOG_PREFIX_VALUE,##arg);     \
 }
 
 /*

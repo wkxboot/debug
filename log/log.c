@@ -1,3 +1,4 @@
+#include "log.h"
 /*****************************************************************************
 *  log库函数                                                          
 *  Copyright (C) 2019 wkxboot 1131204425@qq.com.                             
@@ -11,13 +12,12 @@
 *  @brief    log库函数                                                                                                                                                                                             
 *  @author   wkxboot                                                      
 *  @email    1131204425@qq.com                                              
-*  @version  v1.0.0                                                  
+*  @version  v1.0.1                                                  
 *  @date     2019/1/10                                            
 *  @license  GNU General Public License (GPL)                                
 *                                                                            
 *                                                                            
 *****************************************************************************/
-#include "log.h"
 
 #if  LOG_USE_RTT > 0
 #include "SEGGER_RTT.h"
@@ -91,34 +91,29 @@ uint32_t log_read(char *dst,uint32_t size)
 * @brief 终端日志输出
  @param level 输出等级
 * @param format 格式化字符串
-* @param ... 可变参数列表
+* @param ... 可变参数
 * @return 实际写入的数量
 * @note
 */
 
-int log_vnprintf(uint8_t level,const char *format,...)
+int log_printf(uint8_t level,const char *format,...)
 {
     int rc = 0;
     uint32_t size;
-    char buffer[LOG_PRINTF_BUFFER_SIZE];
+    static char log_print_buffer[LOG_PRINTF_BUFFER_SIZE];
     va_list ap;
     
     va_start(ap,format);
 
     if (level <= log_level_globle ) {
-        size = vsnprintf(buffer,LOG_PRINTF_BUFFER_SIZE,format,ap);
-        /*保证输出是完整的*/
-        if (size > LOG_PRINTF_BUFFER_SIZE - 1) {
-            rc = -1;
-            goto exit;
-        }
+        vsnprintf(log_print_buffer,LOG_PRINTF_BUFFER_SIZE,format,ap);
+        size = strlen(log_print_buffer);
 #if    LOG_USE_RTT > 0
-        rc = SEGGER_RTT_Write(0,buffer,size);
+        rc = SEGGER_RTT_Write(0,log_print_buffer,size);
 #elif  LOG_USE_SERIAL > 0
-        rc = log_serial_uart_write(buffer,size);
+        rc = log_serial_uart_write(log_print_buffer,size);
 #endif
     }
-exit:
     va_end(ap);
     return rc;
 }
