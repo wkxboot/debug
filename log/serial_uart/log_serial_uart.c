@@ -17,12 +17,13 @@
 *                                                                            
 *                                                                            
 *****************************************************************************/
-
-#include "serial.h"
 #include "log_serial_uart.h"
 
-int log_serial_uart_handle;
-
+/*日志串口句柄*/
+serial_handle_t log_serial_uart_handle;
+/*日志接收和发送缓存*/
+static uint8_t log_recv_buffer[LOG_UART_RX_BUFFER_SIZE];
+static uint8_t log_send_buffer[LOG_UART_TX_BUFFER_SIZE];
 
 
 
@@ -44,19 +45,25 @@ static serial_hal_driver_t *log_serial_uart_driver = &nxp_serial_uart_hal_driver
 int log_serial_uart_init(void)
 {
     int rc;
-    rc = serial_create(&log_serial_uart_handle,LOG_UART_RX_BUFFER_SIZE,LOG_UART_TX_BUFFER_SIZE);
+    rc = serial_create(&log_serial_uart_handle,log_recv_buffer,LOG_UART_RX_BUFFER_SIZE,log_send_buffer,LOG_UART_TX_BUFFER_SIZE);
     if (rc != 0) {
         return -1;
     }
-    rc = serial_register_hal_driver(log_serial_uart_handle,log_serial_uart_driver);
+    rc = serial_register_hal_driver(&log_serial_uart_handle,log_serial_uart_driver);
     if (rc != 0) {
         return -1;
     }
 
-    rc = serial_open(log_serial_uart_handle,LOG_UART_PORT,LOG_UART_BAUD_RATES,LOG_UART_DATA_BITS,LOG_UART_STOP_BITS);
+    rc = serial_open(&log_serial_uart_handle,LOG_UART_PORT,LOG_UART_BAUD_RATES,LOG_UART_DATA_BITS,LOG_UART_STOP_BITS);
     if (rc != 0) {
         return -1;
     }
+
+    rc = serial_flush(&log_serial_uart_handle);
+    if (rc != 0) {
+        return -1;
+    }
+
     return 0;
 }
 
@@ -68,9 +75,9 @@ int log_serial_uart_init(void)
 * @note
 */
 
-int log_serial_uart_read(char *dst,uint32_t size)
+int log_serial_uart_read(char *dst,int size)
 {
-    return serial_read(log_serial_uart_handle,dst,size);
+    return serial_read(&log_serial_uart_handle,dst,size);
 }
 
 /*
@@ -80,12 +87,34 @@ int log_serial_uart_read(char *dst,uint32_t size)
 * @return  实际写入的数量
 * @note
 */
-
-int log_serial_uart_write(char *src,uint32_t size)
+int log_serial_uart_write(char *src,int size)
 {
-    return serial_write(log_serial_uart_handle,src,size);
+    int rc = 0;
+    int free_size;
+    free_size = serial_writeable(&log_serial_uart_handle);
+    if (free_size >= size) {
+        rc = serial_write(&log_serial_uart_handle,src,size);
+    }
+
+    return rc;
 }
 
-
+/*
+* @brief log 串口中断
+* @param 无
+* @param 无
+* @return 无
+* @note
+*/
+void log_serial_uart_isr()
+{
+    if (log_serial_uart_handle.registered && log_serial_uart_handle.init) {
+#if (LOG_SERIAL_UART == ST_SERIAL_UART)
+        st_serial_uart_hal_isr(&log_serial_uart_handle);
+#elif (LOG_SERIAL_UART == NXP_SERIAL_UART)
+        nxp_serial_uart_hal_isr(&log_serial_uart_handle);
+#endif
+    }
+}
 
 

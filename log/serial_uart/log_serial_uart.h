@@ -5,6 +5,8 @@
     extern "C" {
 #endif
 #include "stdint.h"
+#include "serial.h"
+
 
 #define  ST_SERIAL_UART                       1
 #define  NXP_SERIAL_UART                      2
@@ -12,7 +14,7 @@
 
 
 #define  LOG_UART_RX_BUFFER_SIZE              32
-#define  LOG_UART_TX_BUFFER_SIZE              1024
+#define  LOG_UART_TX_BUFFER_SIZE              4096
 
 
 #define  LOG_UART_PORT                        1
@@ -20,11 +22,10 @@
 #define  LOG_UART_DATA_BITS                   8
 #define  LOG_UART_STOP_BITS                   1
 
-extern int log_serial_uart_handle;
+extern serial_handle_t log_serial_uart_handle;
 
 #if (LOG_SERIAL_UART == ST_SERIAL_UART)
 #include "st_serial_uart_hal_driver.h"
-#elif 
 #elif (LOG_SERIAL_UART == NXP_SERIAL_UART)
 #include "nxp_serial_uart_hal_driver.h"
 #else
@@ -50,7 +51,7 @@ int log_serial_uart_init(void);
 * @note
 */
 
-int log_serial_uart_read(char *dst,uint32_t size);
+int log_serial_uart_read(char *dst,int size);
 
 /*
 * @brief 串口uart写入数据
@@ -60,7 +61,7 @@ int log_serial_uart_read(char *dst,uint32_t size);
 * @note
 */
 
-int log_serial_uart_write(char *src,uint32_t size);
+int log_serial_uart_write(char *src,int size);
 
 
 #ifdef  __cplusplus

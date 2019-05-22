@@ -1,9 +1,9 @@
 #ifndef   __LOG_H__
 #define   __LOG_H__
-#include "stdio.h"
 #include "stdarg.h"
 #include "stdint.h"
 #include "string.h"
+#include "printf.h"
 
 #ifdef __cplusplus
     extern "C" {
@@ -30,10 +30,10 @@
 /******************************************************************************/
 /*    配置开始                                                                */
 /******************************************************************************/
-#define  LOG_PRINTF_BUFFER_SIZE    1560
+#define  LOG_PRINTF_BUFFER_SIZE    256
 #define  LOG_LEVEL_GLOBLE_DEFAULT  LOG_LEVEL_DEBUG 
-#define  LOG_USE_RTT               1
-#define  LOG_USE_SERIAL            0
+#define  LOG_USE_RTT               0
+#define  LOG_USE_SERIAL            1
 #define  LOG_USE_COLORS            1
 #define  LOG_USE_TIMESTAMP         1   
 
@@ -83,6 +83,14 @@
 #define LOG_ARRAY_PREFIX_FORMAT       "\r\n"LOG_ARRAY_COLOR   LOG_TIME_FORMAT   "[array]"   LOG_FILE_NAME_FORMAT LOG_LINE_NUM_FORMAT "\r\n"
 
 #define LOG_PREFIX_VALUE              LOG_TIME_VALUE,__FILE__,__LINE__ 
+
+/*
+* @brief log串口中断
+* @param 无
+* @return 无
+* @note
+*/
+void log_serial_uart_isr();
 
 
 /*
