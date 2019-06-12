@@ -24,8 +24,8 @@
 #include "SEGGER_RTT.h"
 #endif
 
-#if  LOG_USE_SERIAL > 0
-#include "log_serial_uart.h"
+#if  LOG_USE_UART > 0
+#include "log_uart.h"
 #endif
 
 
@@ -46,8 +46,8 @@ void log_init(void)
     SEGGER_RTT_Init();
 #endif
 
-#if  LOG_USE_SERIAL > 0
-    log_serial_uart_init();
+#if  LOG_USE_UART > 0
+    log_uart_init();
 #endif
 }
 
@@ -81,8 +81,8 @@ uint32_t log_read(char *dst,uint32_t size)
     uint32_t read_cnt;
 #if    LOG_USE_RTT > 0
     read_cnt = SEGGER_RTT_Read(0,dst,size);
-#elif  LOG_USE_SERIAL > 0
-    read_cnt = log_serial_uart_read(dst,size);
+#elif  LOG_USE_UART > 0
+    read_cnt = log_uart_read(dst,size);
 #endif
     return read_cnt;
 }
@@ -111,8 +111,8 @@ int log_printf(uint8_t level,const char *format,...)
         size = strlen(log_print_buffer);
 #if    LOG_USE_RTT > 0
         rc = SEGGER_RTT_Write(0,log_print_buffer,size);
-#elif  LOG_USE_SERIAL > 0
-        rc = log_serial_uart_write(log_print_buffer,size);
+#elif  LOG_USE_UART > 0
+        rc = log_uart_write(log_print_buffer,size);
 #endif
     }
     va_end(ap);
