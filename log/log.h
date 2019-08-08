@@ -37,17 +37,17 @@
 /******************************************************************************/
 /*    配置开始                                                                */
 /******************************************************************************/
-#define  LOG_PRINTF_BUFFER_SIZE    256
+#define  LOG_PRINTF_BUFFER_SIZE    512
 #define  LOG_LEVEL_GLOBLE_DEFAULT  LOG_LEVEL_DEBUG 
-#define  LOG_USE_RTT               0
-#define  LOG_USE_UART              1
+#define  LOG_USE_SEGGER_RTT        1
+#define  LOG_USE_UART_CONSOLE      0
 #define  LOG_USE_COLORS            1
 #define  LOG_USE_TIMESTAMP         1   
 
 #define  LOG_ERROR_COLOR           LOG_COLOR_RED
 #define  LOG_WARNING_COLOR         LOG_COLOR_MAGENTA
-#define  LOG_INFO_COLOR            LOG_COLOR_CYAN
-#define  LOG_DEBUG_COLOR           LOG_COLOR_YELLOW 
+#define  LOG_INFO_COLOR            LOG_COLOR_YELLOW
+#define  LOG_DEBUG_COLOR           LOG_COLOR_GREEN
 
 /******************************************************************************/
 /*    配置结束                                                                */
@@ -79,7 +79,7 @@
 #endif
 
 #define  LOG_FILE_NAME_FORMAT  " %s"
-#define  LOG_LINE_NUM_FORMAT   " %d => "
+#define  LOG_LINE_NUM_FORMAT   " %d $"
 
 
 #define LOG_ERROR_PREFIX_FORMAT       LOG_ERROR_COLOR   LOG_TIME_FORMAT   "[error]"   LOG_FILE_NAME_FORMAT LOG_LINE_NUM_FORMAT 
@@ -195,19 +195,30 @@ void log_assert_handler(int line,char *file_name);
 
 
 /*
-* @brief 终端日志断言
+* @brief 终端日志断言空指针
 * @param expr 断言变量
 * @return 无
 * @note
 */
-#define log_assert(expr)                                                  \
+#define log_assert_null_ptr(expr)                                         \
+{                                                                         \
+    if ((void *)(expr) == (void *)0) {                                    \
+        log_assert_handler(__LINE__,__FILE__);	                          \
+    }                                                                     \
+}
+
+/*
+* @brief 终端日志断言bool假
+* @param expr 断言变量
+* @return 无
+* @note
+*/
+#define log_assert_bool_false(expr)                                       \
 {                                                                         \
     if ((void *)(expr) == 0) {                                            \
         log_assert_handler(__LINE__,__FILE__);	                          \
     }                                                                     \
 }
-
-
 
 
 #ifdef __cplusplus
