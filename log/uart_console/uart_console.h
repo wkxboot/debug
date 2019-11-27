@@ -10,16 +10,20 @@
 #endif
 
 #include "stdint.h"
+#include "debug_assert.h"
+#include "st_cm3_uart_hal_driver.h"
+#include "xuart.h"
 
 #define  UART_CONSOLE_RX_BUFFER_SIZE              32
-#define  UART_CONSOLE_TX_BUFFER_SIZE              4096
+#define  UART_CONSOLE_TX_BUFFER_SIZE              1024
 
 
-#define  UART_CONSOLE_PORT                        2
+#define  UART_CONSOLE_PORT                        1
 #define  UART_CONSOLE_BAUD_RATES                  115200
 #define  UART_CONSOLE_DATA_BITS                   8
 #define  UART_CONSOLE_STOP_BITS                   1
 
+extern xuart_handle_t uart_console_handle;
 /**
 * @brief 串口uart初始化
 * @param 无
@@ -49,14 +53,6 @@ uint32_t uart_console_read(char *dst,uint32_t size);
 
 uint32_t uart_console_write(char *src,uint32_t size);
 
-/**
-* @brief log 串口中断
-* @param 无
-* @param 无
-* @return 无
-* @note
-*/
-void uart_console_isr();
 
 UART_CONSOLE_END
 

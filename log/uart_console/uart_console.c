@@ -14,19 +14,11 @@
 *                                                                            
 *                                                                            
 *****************************************************************************/
-#include "debug_assert.h"
-#include "st_cm3_uart_hal_driver.h"
-#include "xuart.h"
 #include "uart_console.h"
 
 /** 日志串口句柄*/
 xuart_handle_t uart_console_handle;
-/** 日志接收缓存*/
-static uint8_t log_recv_buffer[UART_CONSOLE_RX_BUFFER_SIZE];
-/** 日志发送缓存*/
-static uint8_t log_send_buffer[UART_CONSOLE_TX_BUFFER_SIZE];
 
-extern void st_uart_hal_isr(xuart_handle_t *handle);
 #define  UART_CONSOLE_ISR  st_uart_hal_isr
 
 /**
@@ -39,11 +31,11 @@ void uart_console_init(void)
 {
     int rc;
 
-    xuart_register_hal_driver(&xuart_hal_driver);
-
-    rc = xuart_open(&uart_console_handle,UART_CONSOLE_PORT,UART_CONSOLE_BAUD_RATES,UART_CONSOLE_DATA_BITS,UART_CONSOLE_STOP_BITS,
-                     log_recv_buffer, UART_CONSOLE_RX_BUFFER_SIZE,log_send_buffer, UART_CONSOLE_TX_BUFFER_SIZE);
-    DEBUG_ASSERT_FALSE(rc == 0);
+    uart_console_handle = xuart_create(UART_CONSOLE_RX_BUFFER_SIZE,UART_CONSOLE_TX_BUFFER_SIZE,&st_cm3_xuart_hal_driver);
+    DEBUG_ASSERT(uart_console_handle);
+   
+    rc = xuart_open(uart_console_handle,UART_CONSOLE_PORT,UART_CONSOLE_BAUD_RATES,UART_CONSOLE_DATA_BITS,UART_CONSOLE_STOP_BITS);
+    DEBUG_ASSERT(rc == XUART_ERROR_OK);
     (void)rc;
 }
 
@@ -56,7 +48,7 @@ void uart_console_init(void)
 */
 uint32_t uart_console_read(char *dst,uint32_t size)
 {
-    return xuart_read(&uart_console_handle,(uint8_t *)dst,size);
+    return xuart_read(uart_console_handle,(uint8_t *)dst,size);
 }
 
 /**
@@ -70,20 +62,7 @@ uint32_t uart_console_write(char *src,uint32_t size)
 {
     uint32_t write_size;
 
-    write_size = xuart_write(&uart_console_handle,(uint8_t *)src,size); 
+    write_size = xuart_write(uart_console_handle,(uint8_t *)src,size); 
 
     return write_size;
 }
-
-/**
-* @brief log 串口中断
-* @param 无
-* @return 无
-* @note
-*/
-void uart_console_isr(void)
-{
-    UART_CONSOLE_ISR(&uart_console_handle);
-}
-
-

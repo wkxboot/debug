@@ -101,7 +101,7 @@ int log_printf(uint8_t level,const char *format,...)
 {
     int rc = 0;
     uint32_t size;
-    static char log_print_buffer[LOG_PRINTF_BUFFER_SIZE];
+    char log_print_buffer[LOG_PRINTF_BUFFER_SIZE];
     va_list ap;
     
     va_start(ap,format);
