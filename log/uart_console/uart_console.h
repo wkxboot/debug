@@ -9,16 +9,27 @@
 #define  UART_CONSOLE_END        
 #endif
 
+#define  UART_CONSOLE_ST_CM3   10
+#define  UART_CONSOLE_NXP_CM0  20
+#define  UART_CONSOLE_NXP_CM4  21
+
+#define  UART_CONSOLE  UART_CONSOLE_NXP_CM4
 #include "stdint.h"
 #include "debug_assert.h"
+#if UART_CONSOLE == UART_CONSOLE_NXP_CM0
+#include "nxp_cm0_uart_hal_driver.h"
+#elif  UART_CONSOLE == UART_CONSOLE_NXP_CM4
+#include "nxp_cm4_uart_hal_driver.h"
+#elif UART_CONSOLE ==  UART_CONSOLE_ST_CM3
 #include "st_cm3_uart_hal_driver.h"
+#endif
 #include "xuart.h"
 
 #define  UART_CONSOLE_RX_BUFFER_SIZE              32
 #define  UART_CONSOLE_TX_BUFFER_SIZE              1024
 
 
-#define  UART_CONSOLE_PORT                        1
+#define  UART_CONSOLE_PORT                        8
 #define  UART_CONSOLE_BAUD_RATES                  115200
 #define  UART_CONSOLE_DATA_BITS                   8
 #define  UART_CONSOLE_STOP_BITS                   1

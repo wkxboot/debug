@@ -29,12 +29,12 @@ LOG_BEGIN
 /******************************************************************************/
 #define  LOG_PRINTF_BUFFER_SIZE    256
 #define  LOG_LEVEL_GLOBLE_DEFAULT  LOG_LEVEL_DEBUG 
-#define  LOG_USE_SEGGER_RTT        1/*segger_rtt输出/如果选项为真则uart失效*/
+#define  LOG_USE_SEGGER_RTT        0/*segger_rtt输出/如果选项为真则uart失效*/
 #define  LOG_USE_UART_CONSOLE      1/*uart输出*/
-#define  LOG_USE_COLORS            0
-#define  LOG_USE_TIMESTAMP         0
-#define  LOG_USE_FILE_NAME         0
-#define  LOG_USE_LINE_NAME         0
+#define  LOG_USE_COLORS            1
+#define  LOG_USE_TIMESTAMP         1
+#define  LOG_USE_FILE_NAME         1
+#define  LOG_USE_LINE_NAME         1
 #define  LOG_USE_LEVEL_INFO        1
 /******************************************************************************/
 /*    配置结束                                                                */

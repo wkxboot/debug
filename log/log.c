@@ -46,7 +46,7 @@ void log_init(void)
     SEGGER_RTT_Init();
 #endif
 
-#if  LOG_USE_UART_CONSOLE > 0
+#if LOG_USE_UART_CONSOLE > 0
     uart_console_init();
 #endif
 }

@@ -19,8 +19,6 @@
 /** 日志串口句柄*/
 xuart_handle_t uart_console_handle;
 
-#define  UART_CONSOLE_ISR  st_uart_hal_isr
-
 /**
 * @brief 串口uart初始化
 * @param 无
@@ -30,8 +28,15 @@ xuart_handle_t uart_console_handle;
 void uart_console_init(void)
 {
     int rc;
-
-    uart_console_handle = xuart_create(UART_CONSOLE_RX_BUFFER_SIZE,UART_CONSOLE_TX_BUFFER_SIZE,&st_cm3_xuart_hal_driver);
+    xuart_hal_driver_t *driver;
+#if UART_CONSOLE == UART_CONSOLE_NXP_CM0
+    driver = &nxp_cm0_xuart_hal_driver;
+#elif  UART_CONSOLE == UART_CONSOLE_NXP_CM4
+    driver = &nxp_cm4_xuart_hal_driver;
+#elif UART_CONSOLE ==  UART_CONSOLE_ST_CM3
+    driver = &st_cm3_xuart_hal_driver;
+#endif
+    uart_console_handle = xuart_create(UART_CONSOLE_RX_BUFFER_SIZE,UART_CONSOLE_TX_BUFFER_SIZE,driver);
     DEBUG_ASSERT(uart_console_handle);
    
     rc = xuart_open(uart_console_handle,UART_CONSOLE_PORT,UART_CONSOLE_BAUD_RATES,UART_CONSOLE_DATA_BITS,UART_CONSOLE_STOP_BITS);
@@ -66,3 +71,16 @@ uint32_t uart_console_write(char *src,uint32_t size)
 
     return write_size;
 }
+
+#if UART_CONSOLE == UART_CONSOLE_NXP_CM0
+void FLEXCOMM0_IRQHandler()
+{
+    nxp_uart_hal_isr(uart_console_handle,0);
+}
+#elif  UART_CONSOLE == UART_CONSOLE_NXP_CM4
+void FLEXCOMM8_IRQHandler()
+{
+    nxp_uart_hal_isr(uart_console_handle,8);
+}
+#elif UART_CONSOLE ==  UART_CONSOLE_ST_CM3
+#endif
